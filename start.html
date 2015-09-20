@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="description" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>Banner Circular Sliding</title>
+
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+
+		<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel='stylesheet' type='text/css' />
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.4.0/animate.min.css" rel='stylesheet' type='text/css' />
+
+	</head>
+	<body>
+
+		<div class="banner-container">
+
+			<img src="http://www.bing.com/az/hprichbg/rb/CapReefMilky_EN-IN14273294898_1920x1080.jpg" />
+			<img src="http://www.bing.com/az/hprichbg/rb/BlackNapedMonarch_EN-IN13434161529_1920x1080.jpg" />
+			<img src="http://www.bing.com/az/hprichbg/rb/BirchTreesChina_EN-IN9501112390_1920x1080.jpg" />
+			<img src="https://www.bing.com/az/hprichbg/rb/BratwurstPolka_EN-IN13438606120_1920x1080.jpg" />
+			<img src="https://www.bing.com/az/hprichbg/rb/LakeMyvat_EN-IN10487203466_1366x768.jpg" />
+
+			<div class="layer">
+				<div class="layer-wrapper">
+					<i class="fa fa-angle-left fa-5x previous"></i>
+					<i class="fa fa-angle-right fa-5x next"></i>
+				</div>
+			</div>
+
+		</div>
+
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			.clr {
+				clear: both;
+			}
+			.banner-container {
+				display: block;
+				width: 100%;
+				position: relative;
+				margin: 0 auto;
+				/*margin-right: 100%;*/
+				overflow: hidden;
+			}
+			.banner-container img {
+				max-width: 100%;
+				position: absolute;
+				display: block;
+				float: left;
+			}
+			.layer {
+				width: 100%;
+				position: absolute;
+				/*z-index: 1;*/
+			}
+			.layer-wrapper {
+				width: 75%;
+				margin: 0 auto;
+				background-color: red;
+			}
+			.layer-wrapper .fa-angle-left {
+				float: left;
+				cursor: pointer;
+			}
+			.layer-wrapper .fa-angle-right {
+				float: right;
+				cursor: pointer;
+			}
+			.nevigation {
+				display: block;
+			}
+		</style>
+
+		<script type="text/javascript">
+		
+			$(window).load(function() { // On load
+				$('.banner-container').css({'height':(($('.banner-container img').height()))+'px'});
+				$('.layer').css({'height':(($('.banner-container img').height()))+'px'});
+				$('.layer-wrapper').css({'margin-top':(($('.banner-container img').height())/2.5)+'px'});
+			});
+
+			$(window).resize(function() { // On resize
+				$('.banner-container').css({'height':(($('.banner-container img').height()))+'px'});
+				$('.layer').css({'height':(($('.banner-container img').height()))+'px'});
+				$('.layer-wrapper').css({'margin-top':(($('.banner-container img').height())/2.5)+'px'});
+			});
+
+			// conting how many images are there
+			var imgTagLength = $('.banner-container img').length;
+
+			// hide all images execept the first one
+			$('.banner-container img').not('img:nth-child(1)').css({
+				'visibility': 'hidden',
+			});
+
+			var i = 0;
+			$('.banner-container img').each(function() {
+				$(this).attr('img-no', i);
+				i++;
+			});
+
+			var currentImgNo = 0;	// after loding, visible image denoted as 0
+			var outImage;	// the image which is sliding out
+			var inImage;	// the image which is sliding in
+
+			$(document).ready(function() {
+				$('body').on('click','.next',function(e) {
+
+					var next;
+					if(currentImgNo+1 == imgTagLength) {
+						next = 0;	// the image which is sliding in from right side
+					} else {
+						next = currentImgNo+1;	// the image which is sliding in from right side
+					}
+
+					$('.banner-container img').each(function() {	// to find out the dom which will be sliding in and sliding out
+
+						if($(this).attr('img-no') == currentImgNo) {
+							outImage = $(this);	// the image which is sliding out to left slide that means the current image
+						}
+
+						if($(this).attr('img-no') == next) {
+							inImage = $(this);	// the image which is sliding in from right side
+							$(inImage).css({
+								'margin-left': '100%',
+								'visibility': 'visible',
+							})
+						}
+
+					});
+
+					$(outImage).animate({marginLeft : '-100%'}, 500, function() {
+						$(outImage).css({
+							'visibility': 'hidden',	// sliding out to left side
+						})
+					});
+					$(inImage).animate({marginLeft : '0%'}, 500);	// sliding in from right side
+
+					if(currentImgNo+1 == imgTagLength) {
+						currentImgNo = 0;	// current image pointer
+					} else {
+						currentImgNo++;	// current image pointer
+					}
+
+				});
+			});
+
+			$(document).ready(function() {
+				$('body').on('click','.previous',function(e) {
+
+					var next;
+					if(currentImgNo-1 == -1) {
+						next = imgTagLength-1;	// the image which is sliding in from left side
+					} else {
+						next = currentImgNo-1;	// the image which is sliding in from left side
+					}
+
+					$('.banner-container img').each(function() {	// to find out the dom which will be sliding in and sliding out
+
+						if($(this).attr('img-no') == currentImgNo) {
+							outImage = $(this);	// the image which is sliding out to right slide that means the current image
+						}
+
+						if($(this).attr('img-no') == next) {
+							inImage = $(this);	// the image which is sliding in from left side
+							$(inImage).css({
+								'margin-left': '-100%',
+								'visibility': 'visible',
+							})
+						}
+
+					});
+
+					$(outImage).animate({marginLeft : '100%'}, 500, function() {
+						$(outImage).css({
+							'visibility': 'hidden',	// sliding out to right side
+						})
+					});
+					$(inImage).animate({marginLeft : '0%'}, 500);	// sliding in from left side
+
+					if(currentImgNo-1 == -1) {
+						currentImgNo = imgTagLength-1;	// current image pointer
+					} else {
+						currentImgNo--;	// current image pointer
+					}
+
+				});
+			});
+
+			window.setInterval(function() {
+			  $('.layer-wrapper i').addClass('bounce animated').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
+			  	$('.layer-wrapper i').removeClass('bounce animated');
+			  });
+			}, 3000);	// bounce the navigation icon after each 3 secs.
+			
+		</script>
+		
+	</body>
+</html>
